@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مساعد تسجيل المواد – تخصص IT</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6f5;--surf:#fff;--ink:#14302c;--mute:#5d726e;--line:#d5dfdc;--pass:#1f7a5a;--passbg:#dff3ea;--fail:#b8501a;--failbg:#fde9dc;--sug:#0f5c73;--sugbg:#dcf0f6;--accent:#0f5c73;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1917;--surf:#162623;--ink:#e6f1ee;--mute:#93aaa5;--line:#2a403c;--pass:#5fd0a3;--passbg:#173a2f;--fail:#f0975f;--failbg:#40251a;--sug:#6cc6e0;--sugbg:#123845;--accent:#6cc6e0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1917;--surf:#162623;--ink:#e6f1ee;--mute:#93aaa5;--line:#2a403c;--pass:#5fd0a3;--passbg:#173a2f;--fail:#f0975f;--failbg:#40251a;--sug:#6cc6e0;--sugbg:#123845;--accent:#6cc6e0;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;font-weight:800;margin:0 0 4px}
+h2{font-size:1.2rem;margin:0 0 6px}
+.sub,.note{color:var(--mute)}
+.note{font-size:.92rem;margin:6px 0 0}
+.warn{color:var(--fail)}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin-bottom:12px}
+.stat b{font-size:1.5rem;font-weight:800;color:var(--accent)}
+.stat span{color:var(--mute);margin-inline-start:6px}
+.ctl{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;border:0;background:var(--bg);color:var(--ink);padding:7px 16px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--surf);font-weight:700}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer}
+.btn{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.9rem;color:var(--mute);margin:8px 0 12px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--line);vertical-align:-1px;margin-inline-end:4px}
+.lvl{margin-bottom:14px}
+.lvl h3{font-size:.98rem;margin:0 0 6px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.9rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+.chip.p{background:var(--passbg);border-color:var(--pass);color:var(--pass)}
+.chip.f{background:var(--failbg);border-color:var(--fail);color:var(--fail)}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
+.box{background:var(--surf);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.box h3{margin:0;font-size:1.05rem;display:flex;justify-content:space-between}
+.box h3 small{color:var(--mute);font-weight:400}
+.empty{color:var(--mute);font-size:.9rem}
+.card{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg);display:flex;gap:8px;align-items:flex-start}
+.card.on{background:var(--sugbg);border-color:var(--sug)}
+.card.retake.on{background:var(--failbg);border-color:var(--fail)}
+.card input{margin-top:5px;accent-color:var(--accent)}
+.card .nm{font-weight:700}
+.card small{display:block;color:var(--mute);font-size:.84rem}
+.tag{color:var(--fail);font-weight:700}
+.total{font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>مساعد تسجيل المواد – تخصص IT</h1>
+<p class="sub">علّم على اللي نجحت فيه واللي رسبت فيه، اختار الترم، والموقع يقولك تسجّل إيه في كل مستوى عشان تخلص في ميعادك.</p>
+
+<div class="panel">
+  <div class="stats">
+    <div class="stat"><b id="sPass">0</b><span>ساعة مجتازة</span></div>
+    <div class="stat"><b id="sRem">133</b><span>ساعة متبقية من 133</span></div>
+    <div class="stat"><b id="sLvl">1</b><span>مستواك الحالي</span></div>
+    <div class="stat"><b id="sProj">-</b><span id="sProjL">ترم للتخرج</span></div>
+  </div>
+  <div class="ctl">
+    <span>بتسجّل لـ:</span>
+    <div class="seg" id="termSeg">
+      <button data-t="first">الترم الأول</button><button data-t="second">الترم التاني</button><button data-t="summer">الصيفي</button>
+    </div>
+    <label class="chk"><input type="checkbox" id="ext"> حالة تخرج (زيادة الحد الأقصى بموافقة مجلس الكلية)</label>
+  </div>
+  <p class="note" id="limits"></p>
+  <p class="note" id="trainNote"></p>
+</div>
+
+<div class="panel">
+  <h2>1. حالتك في المواد</h2>
+  <p class="note" style="margin-top:0">اضغط على المادة: مرة = نجحت، مرتين = رسبت (سجلتها وسقطت)، تلات مرات = مسح. لو علّمت مادة «نجحت»، متطلباتها بتتعلّم تلقائيًا.</p>
+  <div class="legend"><span><i class="dot" style="background:var(--passbg);border-color:var(--pass)"></i>نجحت</span><span><i class="dot" style="background:var(--failbg);border-color:var(--fail)"></i>رسبت</span><span><i class="dot"></i>لسه ما درستهاش</span></div>
+  <div id="marks"></div>
+  <button class="btn" id="reset" style="margin-top:6px">مسح كل الاختيارات</button>
+</div>
+
+<div class="panel">
+  <h2>2. المواد المتاحة ليك للتسجيل</h2>
+  <p class="note" style="margin-top:0" id="resInfo"></p>
+  <div class="boxes" id="boxes"></div>
+  <p class="note total" id="total"></p>
+  <p class="note warn" id="warn"></p>
+  <p class="note">المواد بتتعرض حسب الترم اللي بتتفتح فيه في خطة اللائحة (الترمات الفردية في الأول والزوجية في التاني)، والمواد الراسبة بتتقدّم لأنها بتعطّل اللي بعدها. اتأكد من جدول الكلية المعلن قبل التسجيل.</p>
+</div>
+</div>
+
+<script>
+const D=[
+["IT111","Electronics",1,3,[]],["MA111","Mathematics-1",1,3,[]],["HU111","Technical Report Writing",1,2,[]],["HU113","Human Rights",1,2,[]],["MA112","Discrete Math",1,3,[]],["IT110","Introduction to Computers",1,3,[]],
+["ST121","Probability and Statistics-1",2,3,["MA111"]],["HU112","Creative and Scientific Thinking",2,2,[]],["MA113","Mathematics-2",2,3,["MA111"]],["HU101","Micro Economics",2,2,[]],["IT113","Logic Design",2,3,["IT111"]],["CS112","Programming Language",2,3,["IT110"]],
+["CS215","Object Oriented Programming",3,3,["CS112"]],["DS211","Introduction to Database Systems",3,3,["CS112"]],["MA214","Mathematics-3",3,3,["MA112"]],["IT231","Computer Networks Technology",3,3,["IT110"]],["ST222","Probability and Statistics-2",3,3,["ST121"]],["CS240","Introduction to Software Engineering",3,3,["CS112"]],
+["IT217","Introduction to Operation Research",4,3,["CS112","ST121"]],["CS216","Data Structures",4,3,["CS215"]],["AI321","Machine Learning Fundamentals",4,3,["MA214","ST222","CS215"]],["IT230","Web Technology",4,3,["CS215"]],["HU427","Entrepreneurship",4,2,[]],["LB211","Networking Fundamentals Lab",4,2,["IT231"]],
+["LB312","Network Routing and Switching Lab",5,2,["LB211"]],["AI311","Artificial Intelligence",5,3,["CS216"]],["CS319","Operating Systems",5,3,["CS216"]],["IT212","Digital Signal Processing",5,3,["MA214"]],["CS318","Computer Organization",5,3,["IT113","CS216"]],["CS341","Algorithms Analysis and Design",5,3,["CS216"]],
+["IT322","Pattern Recognition",6,3,["IT212","ST222"]],["IT333","Information Computer Networks Security",6,3,["IT231"]],["AI448","Natural Language Processing (اختيارية)",6,3,["AI321"]],["CS344","Advanced Software Engineering",6,3,["CS240"]],["IT343","Microcontroller",6,3,["IT231"]],["LB313","Ethical Hacking Lab",6,2,["IT231"]],
+["LB421","Selected Labs in Software Engineering",7,2,["CS341","CS344"]],["IT423","Embedded Systems",7,3,["IT343"]],["IT221","Computer Graphics",7,3,["CS215"]],["IT434","Advanced Computer Networks",7,3,["IT231"]],["PC401","Project (1)",7,3,[]],["IT438","Communication Technology",7,3,["IT231"]],
+["IT436","Cloud Computing Networking",8,3,["IT434"]],["AI435","Semantic Web and Ontology",8,3,["AI311","IT230"]],["IT439","Wireless and Mobile Networks",8,3,["IT434"]],["HU402","Fundamentals of Management",8,2,[]],["PC402","Project (2)",8,3,["PC401"]],["LB431","Selected Labs in AI",8,2,["AI311"]]
+];
+const TOTAL=133,PC401_MIN=85,LV=["الأول","التاني","التالت","الرابع"];
+const C={};D.forEach(([id,name,sem,h,pre])=>C[id]={id,name,sem,h,pre,lvl:Math.ceil(sem/2),next:[]});
+D.forEach(([id,,,,pre])=>pre.forEach(p=>C[p].next.push(id)));
+function chain(id){const c=C[id];if(c.ch)return c.ch;return c.ch=1+Math.max(0,...c.next.map(chain))}
+function desc(id,s=new Set()){C[id].next.forEach(n=>{if(!s.has(n)){s.add(n);desc(n,s)}});return s}
+Object.keys(C).forEach(id=>{chain(id);C[id].un=desc(id).size});
+C.PC401.ch+=0;
+
+let state={},term="first",ext=false,manual={};
+try{const s=JSON.parse(localStorage.getItem("planner-it-v2")||"{}");state=s.state||{};term=s.term||"first";ext=!!s.ext}catch(e){}
+const save=()=>{try{localStorage.setItem("planner-it-v2",JSON.stringify({state,term,ext}))}catch(e){}};
+const $=id=>document.getElementById(id);
+const hoursOf=st=>D.reduce((s,[id,,,h])=>s+(st[id]==='p'?h:0),0);
+const level=p=>p>=96?4:p>=63?3:p>=30?2:1;
+const lim=()=>term==="summer"?{max:ext?12:9,min:0}:{max:ext?21:18,min:9};
+
+function markP(id){state[id]='p';C[id].pre.forEach(p=>{if(state[p]!=='p')markP(p)})}
+function unmark(id){delete state[id];C[id].next.forEach(n=>{if(state[n]==='p')unmark(n)})}
+function cycle(id){const s=state[id];
+  if(!s)markP(id);else if(s==='p'){unmark(id);state[id]='f'}else delete state[id];
+  manual={};save();render()}
+
+function offered(id,t){return t==="summer"||(t==="first"?C[id].sem%2===1:C[id].sem%2===0)}
+function eligible(id,st,t,ph){
+  if(st[id]==='p'||!C[id].pre.every(p=>st[p]==='p')||!offered(id,t))return false;
+  return id!=="PC401"||ph>=PC401_MIN}
+function order(st){return (a,b)=>{const fa=st[a]==='f'?0:1,fb=st[b]==='f'?0:1;
+  return fa-fb||C[b].ch-C[a].ch||C[b].un-C[a].un||C[a].sem-C[b].sem}}
+function pickFor(st,t,max){
+  const ph=hoursOf(st),cand=Object.keys(C).filter(id=>eligible(id,st,t,ph)).sort(order(st));
+  const pick=[];let tot=0;cand.forEach(id=>{if(tot+C[id].h<=max){pick.push(id);tot+=C[id].h}});
+  return {cand,pick}}
+
+function project(){
+  if(term==="summer")return null;
+  const st={...state};let t=term,n=0;
+  for(;n<14;n++){
+    if(hoursOf(st)>=TOTAL)return n;
+    const {pick}=pickFor(st,t,lim().max);
+    if(!pick.length)return null;
+    pick.forEach(id=>st[id]='p');t=t==="first"?"second":"first";
+  }
+  return hoursOf(st)>=TOTAL?n:null}
+
+function render(){
+  const ph=hoursOf(state),rem=TOTAL-ph,{max,min}=lim();
+  $("sPass").textContent=ph;$("sRem").textContent=Math.max(rem,0);$("sLvl").textContent=LV[level(ph)-1];
+  const pj=project();$("sProj").textContent=pj===null?"-":pj;
+  $("sProjL").textContent=term==="summer"?"(التقدير للأول والتاني بس)":"ترم للتخرج لو نجحت في كل اللي هتسجله";
+  document.querySelectorAll("#termSeg button").forEach(b=>b.classList.toggle("on",b.dataset.t===term));
+  $("ext").checked=ext;
+  $("limits").textContent=(term==="summer"?`الفصل الصيفي: الحد الأقصى ${max} ساعات.`:`الحد الأدنى 9 ساعات والحد الأقصى ${max} ساعة.`)+(ext?" (بعد الزيادة لدواعي التخرج)":"");
+  $("trainNote").textContent=ph>=60?"عدّيت 60 ساعة: لازم تسجّل التدريب الصيفي (2 ساعة معتمدة) ولا تتخرج بدونه.":"";
+
+  const marks=$("marks");marks.innerHTML="";
+  for(let l=1;l<=4;l++){
+    const d=document.createElement("div");d.className="lvl";d.innerHTML=`<h3>المستوى ${LV[l-1]}</h3><div class="chips"></div>`;
+    const ch=d.querySelector(".chips");
+    D.filter(x=>C[x[0]].lvl===l).forEach(([id,name])=>{
+      const b=document.createElement("button");b.className="chip "+(state[id]||"");b.textContent=name;b.title=id;b.onclick=()=>cycle(id);ch.appendChild(b)});
+    marks.appendChild(d)}
+
+  const {cand,pick}=pickFor(state,term,max);
+  const sel=id=>id in manual?manual[id]:pick.includes(id);
+  $("resInfo").textContent=ph>=TOTAL?"خلصت كل المواد، مبروك!":"الخانات المعلّمة هي المقترحة. تقدر تشيل علامة أو تضيف مادة من الباقي.";
+  const boxes=$("boxes");boxes.innerHTML="";let tot=0;
+  for(let l=1;l<=4;l++){
+    const items=cand.filter(id=>C[id].lvl===l);
+    const b=document.createElement("div");b.className="box";
+    const h=items.filter(sel).reduce((s,id)=>s+C[id].h,0);tot+=h;
+    b.innerHTML=`<h3><span>المستوى ${LV[l-1]}</span><small>${h} ساعة</small></h3>`;
+    if(!items.length){const e=document.createElement("div");e.className="empty";e.textContent="مفيش مواد متاحة للتسجيل في الترم ده.";b.appendChild(e)}
+    items.forEach(id=>{const c=C[id],on=sel(id),f=state[id]==='f';
+      const pre=id==="PC401"?`اجتياز ${PC401_MIN} ساعة`:(c.pre.length?c.pre.map(p=>C[p].name).join(" + "):"لا يوجد");
+      const el=document.createElement("label");el.className="card"+(on?" on":"")+(f?" retake":"");
+      el.innerHTML=`<input type="checkbox" ${on?"checked":""}><div><span class="nm">${c.name}</span>${f?' <span class="tag">إعادة</span>':""}<small>${c.id} · ${c.h} ساعات · ترم ${c.sem}</small><small>المتطلب: ${pre}</small></div>`;
+      el.querySelector("input").onchange=e=>{manual[id]=e.target.checked;render()};
+      b.appendChild(el)});
+    boxes.appendChild(b)}
+  $("total").textContent=`إجمالي الساعات المختارة: ${tot} من أقصى ${max}`;
+  let w="";
+  if(tot>max)w=`المختار (${tot}) أكبر من الحد الأقصى (${max}). شيل مادة أو أكتر.`;
+  else if(min&&tot<min&&rem>=9)w=`المختار (${tot}) أقل من الحد الأدنى للتسجيل (9 ساعات).`;
+  if(ph<PC401_MIN&&state.PC401!=='p')w+=(w?" ":"")+`مشروع (1) بيتفتح بعد ${PC401_MIN} ساعة مجتازة، ومعاك ${ph}.`;
+  $("warn").textContent=w}
+
+document.querySelectorAll("#termSeg button").forEach(b=>b.onclick=()=>{term=b.dataset.t;manual={};save();render()});
+$("ext").onchange=e=>{ext=e.target.checked;manual={};save();render()};
+$("reset").onclick=()=>{state={};manual={};save();render()};
+render();
+</script>
+</body>
+</html>
