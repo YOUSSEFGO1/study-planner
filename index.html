@@ -50,6 +50,14 @@ label.chk{display:flex;gap:6px;align-items:center;cursor:pointer}
 .card small{display:block;color:var(--mute);font-size:.84rem}
 .tag{color:var(--fail);font-weight:700}
 .total{font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+.half{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg)}
+.half h4{margin:0 0 6px;font-size:.9rem;color:var(--mute);font-weight:700}
+.half .chip{background:var(--surf)}
+.half .chip.p{background:var(--passbg)}
+.half .chip.f{background:var(--failbg)}
+.card small.why{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -84,12 +92,13 @@ label.chk{display:flex;gap:6px;align-items:center;cursor:pointer}
 </div>
 
 <div class="panel">
-  <h2>2. المواد المتاحة ليك للتسجيل</h2>
+  <h2>2. أفضل مواد تسجلها الترم ده</h2>
   <p class="note" style="margin-top:0" id="resInfo"></p>
   <div class="boxes" id="boxes"></div>
+  <button class="btn" id="moreBtn" style="margin-top:10px"></button>
   <p class="note total" id="total"></p>
   <p class="note warn" id="warn"></p>
-  <p class="note">المواد بتتعرض حسب الترم اللي بتتفتح فيه في خطة اللائحة (الترمات الفردية في الأول والزوجية في التاني)، والمواد الراسبة بتتقدّم لأنها بتعطّل اللي بعدها. اتأكد من جدول الكلية المعلن قبل التسجيل.</p>
+  <p class="note">الاختيار بيقدّم المواد اللي بتفتح أطول سلسلة مواد بعدها (عشان ما تتأخرش في التخرج)، وبعدها الراسبة والأقدم في الخطة، في حدود الساعات المسموحة. المواد بتتعرض حسب الترم اللي بتتفتح فيه في اللائحة (فردي = الأول، زوجي = التاني). اتأكد من جدول الكلية المعلن قبل التسجيل.</p>
 </div>
 </div>
 
@@ -112,7 +121,7 @@ function desc(id,s=new Set()){C[id].next.forEach(n=>{if(!s.has(n)){s.add(n);desc
 Object.keys(C).forEach(id=>{chain(id);C[id].un=desc(id).size});
 C.PC401.ch+=0;
 
-let state={},term="first",ext=false,manual={};
+let state={},term="first",ext=false,manual={},showAll=false;
 try{const s=JSON.parse(localStorage.getItem("planner-it-v2")||"{}");state=s.state||{};term=s.term||"first";ext=!!s.ext}catch(e){}
 const save=()=>{try{localStorage.setItem("planner-it-v2",JSON.stringify({state,term,ext}))}catch(e){}};
 const $=id=>document.getElementById(id);
@@ -130,8 +139,14 @@ function offered(id,t){return t==="summer"||(t==="first"?C[id].sem%2===1:C[id].s
 function eligible(id,st,t,ph){
   if(st[id]==='p'||!C[id].pre.every(p=>st[p]==='p')||!offered(id,t))return false;
   return id!=="PC401"||ph>=PC401_MIN}
-function order(st){return (a,b)=>{const fa=st[a]==='f'?0:1,fb=st[b]==='f'?0:1;
-  return fa-fb||C[b].ch-C[a].ch||C[b].un-C[a].un||C[a].sem-C[b].sem}}
+// h = أقل عدد ترمات لازم تتقضي من المادة دي لحد آخر مادة معتمدة عليها (مع مراعاة فردي/زوجي)
+function hMap(st){const H={};
+  Object.keys(C).sort((a,b)=>C[b].sem-C[a].sem).forEach(id=>{
+    let m=1;C[id].next.forEach(d=>{if(st[d]!=='p'){const g=(C[id].sem%2)!==(C[d].sem%2)?1:2;m=Math.max(m,g+H[d])}});H[id]=m});
+  return H}
+function descUn(id,st){return [...desc(id)].filter(d=>st[d]!=='p').length}
+function order(st){const H=hMap(st);
+  return (a,b)=>H[b]-H[a]||(st[a]==='f'?0:1)-(st[b]==='f'?0:1)||C[a].sem-C[b].sem||C[b].un-C[a].un}
 function pickFor(st,t,max){
   const ph=hoursOf(st),cand=Object.keys(C).filter(id=>eligible(id,st,t,ph)).sort(order(st));
   const pick=[];let tot=0;cand.forEach(id=>{if(tot+C[id].h<=max){pick.push(id);tot+=C[id].h}});
@@ -160,29 +175,34 @@ function render(){
 
   const marks=$("marks");marks.innerHTML="";
   for(let l=1;l<=4;l++){
-    const d=document.createElement("div");d.className="lvl";d.innerHTML=`<h3>المستوى ${LV[l-1]}</h3><div class="chips"></div>`;
-    const ch=d.querySelector(".chips");
-    D.filter(x=>C[x[0]].lvl===l).forEach(([id,name])=>{
-      const b=document.createElement("button");b.className="chip "+(state[id]||"");b.textContent=name;b.title=id;b.onclick=()=>cycle(id);ch.appendChild(b)});
+    const d=document.createElement("div");d.className="lvl";d.innerHTML=`<h3>المستوى ${LV[l-1]}</h3><div class="two"></div>`;
+    const two=d.querySelector(".two");
+    [[2*l-1,"الترم الأول"],[2*l,"الترم التاني"]].forEach(([sem,label])=>{
+      const half=document.createElement("div");half.className="half";half.innerHTML=`<h4>${label} (ترم ${sem})</h4><div class="chips"></div>`;
+      const ch=half.querySelector(".chips");
+      D.filter(x=>x[2]===sem).forEach(([id,name])=>{
+        const b=document.createElement("button");b.className="chip "+(state[id]||"");b.textContent=name;b.title=id;b.onclick=()=>cycle(id);ch.appendChild(b)});
+      two.appendChild(half)});
     marks.appendChild(d)}
 
   const {cand,pick}=pickFor(state,term,max);
   const sel=id=>id in manual?manual[id]:pick.includes(id);
-  $("resInfo").textContent=ph>=TOTAL?"خلصت كل المواد، مبروك!":"الخانات المعلّمة هي المقترحة. تقدر تشيل علامة أو تضيف مادة من الباقي.";
+  $("resInfo").textContent=ph>=TOTAL?"خلصت كل المواد، مبروك!":"دي أفضل مواد تسجلها بترتيب الأهمية، ومقسمة حسب مستوى كل مادة. تقدر تشيل علامة أو تضيف مادة من باقي المتاح.";
   const boxes=$("boxes");boxes.innerHTML="";let tot=0;
   for(let l=1;l<=4;l++){
-    const items=cand.filter(id=>C[id].lvl===l);
+    const items=cand.filter(id=>C[id].lvl===l&&(showAll||pick.includes(id)||id in manual));
     const b=document.createElement("div");b.className="box";
     const h=items.filter(sel).reduce((s,id)=>s+C[id].h,0);tot+=h;
     b.innerHTML=`<h3><span>المستوى ${LV[l-1]}</span><small>${h} ساعة</small></h3>`;
     if(!items.length){const e=document.createElement("div");e.className="empty";e.textContent="مفيش مواد متاحة للتسجيل في الترم ده.";b.appendChild(e)}
-    items.forEach(id=>{const c=C[id],on=sel(id),f=state[id]==='f';
+    items.forEach(id=>{const c=C[id],on=sel(id),f=state[id]==='f';const un=descUn(id,state);const why=[];if(f)why.push('لازم تعيدها');why.push(un>0?`بتفتحلك ${un} مادة بعدها`:'لازمة للتخرج');if(!pick.includes(id))why.push('مش أولوية الترم ده');
       const pre=id==="PC401"?`اجتياز ${PC401_MIN} ساعة`:(c.pre.length?c.pre.map(p=>C[p].name).join(" + "):"لا يوجد");
       const el=document.createElement("label");el.className="card"+(on?" on":"")+(f?" retake":"");
-      el.innerHTML=`<input type="checkbox" ${on?"checked":""}><div><span class="nm">${c.name}</span>${f?' <span class="tag">إعادة</span>':""}<small>${c.id} · ${c.h} ساعات · ترم ${c.sem}</small><small>المتطلب: ${pre}</small></div>`;
+      el.innerHTML=`<input type="checkbox" ${on?"checked":""}><div><span class="nm">${c.name}</span>${f?' <span class="tag">إعادة</span>':""}<small>${c.id} · ${c.h} ساعات · ترم ${c.sem}</small><small>المتطلب: ${pre}</small><small class="why">${why.join(" · ")}</small></div>`;
       el.querySelector("input").onchange=e=>{manual[id]=e.target.checked;render()};
       b.appendChild(el)});
     boxes.appendChild(b)}
+  const more=cand.length-pick.length;$("moreBtn").style.display=more>0?"":"none";$("moreBtn").textContent=showAll?"إخفاء باقي المواد المتاحة":`عرض باقي المواد المتاحة (${more})`;
   $("total").textContent=`إجمالي الساعات المختارة: ${tot} من أقصى ${max}`;
   let w="";
   if(tot>max)w=`المختار (${tot}) أكبر من الحد الأقصى (${max}). شيل مادة أو أكتر.`;
@@ -193,6 +213,7 @@ function render(){
 document.querySelectorAll("#termSeg button").forEach(b=>b.onclick=()=>{term=b.dataset.t;manual={};save();render()});
 $("ext").onchange=e=>{ext=e.target.checked;manual={};save();render()};
 $("reset").onclick=()=>{state={};manual={};save();render()};
+$("moreBtn").onclick=()=>{showAll=!showAll;render()};
 render();
 </script>
 </body>
