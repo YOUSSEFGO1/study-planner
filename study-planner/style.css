@@ -1,0 +1,52 @@
+:root{--bg:#f3f6f5;--surf:#fff;--ink:#14302c;--mute:#5d726e;--line:#d5dfdc;--pass:#1f7a5a;--passbg:#dff3ea;--fail:#b8501a;--failbg:#fde9dc;--sug:#0f5c73;--sugbg:#dcf0f6;--accent:#0f5c73;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1917;--surf:#162623;--ink:#e6f1ee;--mute:#93aaa5;--line:#2a403c;--pass:#5fd0a3;--passbg:#173a2f;--fail:#f0975f;--failbg:#40251a;--sug:#6cc6e0;--sugbg:#123845;--accent:#6cc6e0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1917;--surf:#162623;--ink:#e6f1ee;--mute:#93aaa5;--line:#2a403c;--pass:#5fd0a3;--passbg:#173a2f;--fail:#f0975f;--failbg:#40251a;--sug:#6cc6e0;--sugbg:#123845;--accent:#6cc6e0;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;font-weight:800;margin:0 0 4px}
+h2{font-size:1.2rem;margin:0 0 6px}
+.sub,.note{color:var(--mute)}
+.note{font-size:.92rem;margin:6px 0 0}
+.warn{color:var(--fail)}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin-bottom:12px}
+.stat b{font-size:1.5rem;font-weight:800;color:var(--accent)}
+.stat span{color:var(--mute);margin-inline-start:6px}
+.ctl{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;border:0;background:var(--bg);color:var(--ink);padding:7px 16px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--surf);font-weight:700}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer}
+.btn{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.9rem;color:var(--mute);margin:8px 0 12px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--line);vertical-align:-1px;margin-inline-end:4px}
+.lvl{margin-bottom:14px}
+.lvl h3{font-size:.98rem;margin:0 0 6px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.9rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+.chip.p{background:var(--passbg);border-color:var(--pass);color:var(--pass)}
+.chip.f{background:var(--failbg);border-color:var(--fail);color:var(--fail)}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
+.box{background:var(--surf);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.box h3{margin:0;font-size:1.05rem;display:flex;justify-content:space-between}
+.box h3 small{color:var(--mute);font-weight:400}
+.empty{color:var(--mute);font-size:.9rem}
+.card{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg);display:flex;gap:8px;align-items:flex-start}
+.card.on{background:var(--sugbg);border-color:var(--sug)}
+.card.retake.on{background:var(--failbg);border-color:var(--fail)}
+.card input{margin-top:5px;accent-color:var(--accent)}
+.card .nm{font-weight:700}
+.card small{display:block;color:var(--mute);font-size:.84rem}
+.tag{color:var(--fail);font-weight:700}
+.total{font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+.half{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg)}
+.half h4{margin:0 0 6px;font-size:.9rem;color:var(--mute);font-weight:700}
+.half .chip{background:var(--surf)}
+.half .chip.p{background:var(--passbg)}
+.half .chip.f{background:var(--failbg)}
+.card small.why{color:var(--accent)}
